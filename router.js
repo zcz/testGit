@@ -1,7 +1,7 @@
-function route( handle, pathname, response, postData ) {
+function route( handle, pathname, request, response ) {
   console.log("about to route a request: ", pathname );
   if (typeof handle[pathname] === 'function') {
-    handle[pathname]( response, postData );
+    handle[pathname]( request, response);
   } else {
     console.log("no requesthandler for ", pathname );
     response.writeHead( 404, {"Content-Type": "text/plain"});
