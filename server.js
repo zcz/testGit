@@ -1,9 +1,26 @@
 var http = require("http");
-var counter = 0;
+var url = require("url");
 
-http.createServer(function(request, response) {
-  response.writeHead(200, {"Content-Type": "text/plain"});
-  response.write("Hello World, this is 4sth, " + counter++);
-  response.end();
-}).listen(80);
+function start( port, route, handle ) {
+  function onRequest(request, response) {
+    var pathname = url.parse(request.url).pathname;
+    var postData = "";
+    console.log("Request for " + pathname + " received." );
+
+    request.setEncoding("utf8");
+
+    request.addListener("data", function(postDataChunk) {
+      postData += postDataChunk;
+      console.log("Received POST data chunk", postDataChunk );
+    });
+  
+    request.addListener("end", function() {
+      route( handle, pathname, response, postData ); 
+    });
+  }
+  http.createServer(onRequest).listen( port );
+  console.log(new Date(), "server started at port", port );
+}
+
+exports.start = start;
 
